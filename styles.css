@@ -20,3 +20,21 @@
 .pen-tile{background:#faf9f4;border:1px solid #e8e0ce;border-radius:9px;padding:9px;min-width:0}.pen-tile b{font-size:10px;display:block}.pen-tile small,.pen-count{display:block;font-size:9px;color:var(--muted);margin-top:4px}.pen-count{color:#667044;font-weight:700}
 @media(max-width:1000px){.barn-grid{grid-template-columns:1fr 1fr}}
 @media(max-width:650px){.barn-grid{grid-template-columns:1fr}.barn-card p{min-height:0}.pen-grid.twelve{grid-template-columns:repeat(3,minmax(0,1fr))}}
+
+.button-row{display:flex;gap:8px;flex-wrap:wrap}
+.pen-overview{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-bottom:18px}
+.pen-overview-card{background:#fff;border:1px solid var(--line);border-radius:13px;padding:15px;box-shadow:var(--shadow);min-width:0}
+.pen-overview-head{display:flex;align-items:flex-start;justify-content:space-between;gap:8px}.pen-overview-head h3{font-size:13px;margin:0 0 5px}.pen-overview-head small{font-size:10px;color:var(--muted)}
+.capacity-bar{height:7px;border-radius:10px;background:#eee9dc;overflow:hidden;margin:14px 0 9px}.capacity-bar span{display:block;height:100%;background:#667044;border-radius:10px}
+.pen-overview-foot{display:flex;justify-content:space-between;gap:5px;font-size:10px;color:var(--muted);margin-bottom:12px}
+@media(max-width:900px){.pen-overview{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:560px){.pen-overview{grid-template-columns:1fr}.button-row{width:100%}.button-row .btn{flex:1}}
+
+/* Inventario individual ampliado */
+.table-wrap table{min-width:980px}.button-row{display:flex;gap:8px;flex-wrap:wrap}
+
+.heading-actions{display:flex;gap:9px;flex-wrap:wrap}
+.pen-management{display:grid;gap:8px;margin-top:14px}
+.pen-manage-row{display:grid;grid-template-columns:minmax(0,2fr) minmax(90px,1fr) auto auto;gap:12px;align-items:center;border:1px solid var(--line);background:#faf9f4;padding:12px;border-radius:10px}
+.pen-manage-name b,.pen-manage-count b{display:block;font-size:12px}.pen-manage-name small,.pen-manage-count small{display:block;color:var(--muted);font-size:10px;margin-top:4px}
+@media(max-width:650px){.heading-actions{width:100%}.heading-actions .btn{flex:1}.pen-manage-row{grid-template-columns:1fr auto;gap:8px}.pen-manage-count{grid-column:1}.pen-manage-row .tag{grid-column:1/-1;width:max-content}}

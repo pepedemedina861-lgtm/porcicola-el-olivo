@@ -63,3 +63,37 @@ CÁLCULOS REPRODUCTIVOS AÑADIDOS EN V2
 - Cuando se registra fecha de servicio o una fecha de inicio de gestación, la interfaz estima el parto a 114 días si no se introduce una fecha manual.
 - Muestra una ventana orientativa de vigilancia por posible retorno a celo a los 18–24 días después del servicio.
 - Esto no representa una probabilidad individual calculada: la repetición de celo debe confirmarse mediante observación y registro. La fecha estimada es orientativa y debe validarse con el personal veterinario.
+
+CORRECCIÓN V3 — NAVE Y CORRALES
+Se corrigió el HTML de las tarjetas de Nave 2 y Nave 3: ahora los 4 corrales de 50 plazas y los 12 corrales de 40 plazas están escritos como HTML válido, en vez de mostrar código JavaScript como texto. Se actualizó el identificador de caché del service worker para facilitar la descarga de los archivos nuevos.
+
+VERSIÓN 4 — CALENDARIO REPRODUCTIVO AUTOMÁTICO
+Al registrar un servicio (monta o inseminación) con fecha, el sistema calcula automáticamente la ventana orientativa de retorno a celo (días 18–24) y la fecha probable de parto (114 días desde el servicio). Genera recordatorios automáticamente, sin que el usuario tenga que crear alertas manualmente. En el registro reproductivo debe seleccionarse el estado de gestación: Pendiente de confirmar, Preñada confirmada, No preñada / repitió celo o Parto realizado. La confirmación de gestación modifica el tipo de seguimiento automático. El usuario solo registra el servicio y el resultado observado; la app calcula las fechas.
+Nota: 114 días es una estimación habitual, no una garantía exacta. La ventana de 18–24 días es orientativa; la observación real y confirmación veterinaria son importantes.
+
+VERSIÓN 5 — INGRESO POR CANTIDAD, FICHAS INDIVIDUALES Y CORRALES
+- Se puede ingresar una cantidad de animales por categoría y edad en días.
+- Cada animal ingresado recibe una ficha individual y un ID único; en engorde se agrupan por un mismo lote y se cuentan machos y hembras.
+- Se puede editar individualmente cada animal, cambiar su lote y su ubicación actual. La ocupación de áreas se recalcula a partir de los registros activos.
+- Ubicaciones: Timbo gestación, Timbo macho reproductor, Timbo lactancia, Precebo 1, 2 y 3, Charca 1 y 2, Nave 2 corrales 1–4, Nave 3 corrales 1–12.
+- Cada área tiene una capacidad configurable. Se inicializa en 0/no configurada porque el usuario no indicó las capacidades reales; al ingresar animales, la app advierte si se excede una capacidad configurada.
+- La edad de ingreso en días se convierte en fecha de nacimiento estimada a partir de la fecha de ingreso. Es una estimación administrativa.
+
+VERSIÓN 5 — INGRESO INDIVIDUAL POR GRUPOS Y CORRALES
+- Ingreso por cantidad: Engorde, Cerda de cría, Macho reproductor, Lechones y Reemplazo.
+- Cada animal ingresado genera una ficha individual con arete único, edad en días, fecha de nacimiento calculada, lote, sexo y ubicación actual.
+- En engorde se debe repartir la cantidad entre machos y hembras; cada ficha queda individual y se puede editar/mover de lote o corral.
+- Áreas precargadas: Timbo gestación, Timbo macho reproductor, Timbo lactancia, Precebo 1, Precebo 2, Precebo 3, Charca 1, Charca 2, Nave 2 corrales 1–4 y Nave 3 corrales 1–12.
+- En Corrales y lotes se puede editar la capacidad máxima real de cada ubicación. Ocupación y plazas libres se calculan según fichas activas.
+- El inventario muestra edad, lote, ubicación y sexo, y permite editar cada cerdo individual.
+
+
+VERSIÓN 5 — INGRESOS POR LOTE Y CAPACIDAD POR CORRAL
+- Botón “Ingreso por lote” crea una ficha individual por cada cerdo ingresado, con identificador único, edad en días convertida a fecha de nacimiento, lote, sexo, categoría y ubicación.
+- Para engorde, se indica cantidad de machos y cantidad de hembras; la suma define cuántas fichas individuales se crean.
+- Para cerdas de cría y machos reproductores, se indica la cantidad total y el sistema asigna el sexo correspondiente.
+- Los animales de engorde pueden editarse individualmente y moverse de lote o corral desde el formulario individual.
+- La sección “Naves y corrales” permite editar la capacidad máxima de cada área y muestra ocupación activa, plazas disponibles y alertas si se supera la capacidad.
+- Áreas: Timbo gestación, Timbo macho reproductor, Timbo lactancia, Precebo 1, 2 y 3, Charca 1 y 2, Nave 2 corrales 1–4, Nave 3 corrales 1–12.
+- Capacidad predeterminada: Nave 2 corrales 1–4 = 50 cada uno; Nave 3 corrales 1–12 = 40 cada uno. Áreas de Nave 1 empiezan con capacidad 0/sin definir para que el usuario configure la capacidad real.
+- Se corrigió el resumen para leer los almacenes correctos y se actualizó la caché del service worker.
