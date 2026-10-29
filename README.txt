@@ -41,3 +41,25 @@ LIMITACIONES DE ESTA VERSIÓN INICIAL
 
 Próximo paso recomendado
 Configurar el despliegue HTTPS y probar en iPhone; después añadir importación masiva desde Excel/CSV para cargar inventario existente y revisar si conviene conectar el proyecto Supabase ya creado.
+
+
+ACTUALIZACIÓN VISUAL Y OPERATIVA
+- Identidad visual olivo, café, beige y dorado; incorpora el logo suministrado.
+- Ubicación de referencia: Guadalupe, Huila, Colombia.
+- Nave 1: áreas de cerdas de cría, machos reproductores, maternidad/lechones recién nacidos y charcas; capacidad pendiente de definir.
+- Nave 2: 4 corrales de 50 plazas (200 en total).
+- Nave 3: 12 corrales de 40 plazas (480 en total).
+- Para contar ocupación, escribe en el campo Lote los códigos N2-C1…N2-C4 o N3-C1…N3-C12.
+- Comederos configurables por capacidad en kg, número de cerdos, etapa, sexo, consumo estimado kg/cerdo/día, factor ambiental y stock disponible.
+- Conversión de alimento: 1 bulto = 40 kg. La app estima kg/día, bultos/día y días de duración del stock.
+- Se añadió seguimiento de estado de inmunocastración y fechas de dosis al registro de animales.
+- Se añadieron campos de servicio, último celo observado y riesgo de repetir celo en reproducción.
+
+NOTA TÉCNICA
+La ubicación Guadalupe, Huila queda como dato de la granja; no se asigna automáticamente un factor climático sin mediciones o recomendación técnica. En comederos el factor comienza en 1,00 y es editable. El consumo real depende de etapa, peso, genética, dieta, agua, temperatura y manejo.
+La duración gestacional debe registrarse con fecha probable validada por el productor/veterinario; esta versión todavía no calcula automáticamente la fecha de parto ni determina un porcentaje clínico de repetición de celo. El seguimiento de inmunocastración es administrativo, no una indicación de protocolo o dosificación veterinaria.
+
+CÁLCULOS REPRODUCTIVOS AÑADIDOS EN V2
+- Cuando se registra fecha de servicio o una fecha de inicio de gestación, la interfaz estima el parto a 114 días si no se introduce una fecha manual.
+- Muestra una ventana orientativa de vigilancia por posible retorno a celo a los 18–24 días después del servicio.
+- Esto no representa una probabilidad individual calculada: la repetición de celo debe confirmarse mediante observación y registro. La fecha estimada es orientativa y debe validarse con el personal veterinario.

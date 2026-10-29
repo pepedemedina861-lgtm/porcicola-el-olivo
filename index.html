@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#24543d">
+  <meta name="theme-color" content="#667044">
   <meta name="description" content="Gestión local de granja porcina: inventario, reproducción, salud, alimentación, finanzas y recordatorios.">
   <link rel="manifest" href="manifest.json">
   <link rel="stylesheet" href="styles.css">
@@ -11,13 +11,15 @@
 </head>
 <body>
 <header class="topbar">
-  <div class="brand"><div class="logo">🐖</div><div><strong>Porcícola El Olivo</strong><small>Gestión de granja · modo local</small></div></div>
+  <div class="brand"><img class="brand-logo" src="logo-el-olivo.png" alt="Logo Porcícola El Olivo"><div><strong>Porcícola El Olivo</strong><small>Guadalupe · Huila · Colombia</small></div></div>
   <button id="backupBtn" class="btn light">Copia de seguridad</button>
 </header>
 <div class="layout">
   <aside class="sidebar" aria-label="Navegación">
     <button class="nav active" data-page="inicio">⌂ <span>Resumen</span></button>
     <button class="nav" data-page="animales">🐖 <span>Inventario</span></button>
+    <button class="nav" data-page="granja">▦ <span>Naves y corrales</span></button>
+    <button class="nav" data-page="alimento">◉ <span>Alimento y comederos</span></button>
     <button class="nav" data-page="reproduccion">♡ <span>Reproducción y partos</span></button>
     <button class="nav" data-page="salud">✚ <span>Salud y alimentación</span></button>
     <button class="nav" data-page="finanzas">$ <span>Gastos y ventas</span></button>
@@ -26,7 +28,7 @@
   </aside>
   <main>
     <section id="page-inicio" class="page">
-      <div class="page-heading"><div><p class="eyebrow">PANEL GENERAL</p><h1>Resumen de la granja</h1><p class="muted">Tus registros permanecen en este dispositivo.</p></div><span class="local-pill">● Solo almacenamiento local</span></div>
+      <div class="page-heading"><div><p class="eyebrow">PANEL GENERAL</p><h1>Resumen de la granja</h1><p class="muted">Tus registros permanecen en este dispositivo.</p></div><span class="local-pill">● Datos locales · Guadalupe, Huila</span></div>
       <div class="stats">
         <article class="stat"><span>Animales registrados</span><strong id="statAnimals">0</strong><small>Inventario total</small></article>
         <article class="stat"><span>Gestaciones activas</span><strong id="statPreg">0</strong><small>Registros de reproducción</small></article>
@@ -53,6 +55,26 @@
       <div class="toolbar"><input id="animalSearch" placeholder="Buscar por arete, nombre o lote…"><select id="animalFilter"><option value="">Todas las categorías</option><option>Lechón</option><option>Reemplazo</option><option>Cerda reproductora</option><option>Verraco</option><option>Engorde</option><option>Otro</option></select></div>
       <div class="table-wrap"><table><thead><tr><th>ID / Arete</th><th>Categoría</th><th>Lote</th><th>Sexo</th><th>Peso (kg)</th><th>Estado</th><th></th></tr></thead><tbody id="animalsBody"></tbody></table></div>
       <div id="animalEmpty" class="empty hidden">No hay animales que coincidan. Añade el primero con «Nuevo animal».</div>
+    </section>
+
+
+    <section id="page-granja" class="page hidden">
+      <div class="page-heading"><div><p class="eyebrow">DISTRIBUCIÓN FÍSICA</p><h1>Naves y corrales</h1><p class="muted">Estructura inicial de la granja en Guadalupe, Huila.</p></div></div>
+      <div class="barn-grid">
+        <article class="barn-card"><div class="barn-top"><span class="barn-icon">🏡</span><span class="barn-label">REPRODUCCIÓN</span></div><h2>Nave 1</h2><p>Cerdas de cría, machos reproductores, lechones recién nacidos y charcas.</p><div class="barn-stats"><div><b>4</b><small>Áreas funcionales</small></div><div><b>Por definir</b><small>Capacidad total</small></div></div><div class="pen-chips"><span>Cerdas de cría</span><span>Machos</span><span>Maternidad</span><span>Charcas</span></div></article>
+        <article class="barn-card"><div class="barn-top"><span class="barn-icon">🐖</span><span class="barn-label">ENGORDE</span></div><h2>Nave 2</h2><p>Cuatro corrales con capacidad de 50 cerdos cada uno.</p><div class="barn-stats"><div><b>4</b><small>Corrales</small></div><div><b>200</b><small>Plazas máximas</small></div></div><div class="pen-grid">${Array.from({length:4},(_,i)=>`<div class="pen-tile"><b>Corral ${i+1}</b><small>Capacidad: 50</small><span class="pen-count" data-pen="n2c${i+1}">0 registrados</span></div>`).join("")}</div></article>
+        <article class="barn-card"><div class="barn-top"><span class="barn-icon">🐗</span><span class="barn-label">ENGORDE</span></div><h2>Nave 3</h2><p>Doce corrales con capacidad de 40 cerdos cada uno.</p><div class="barn-stats"><div><b>12</b><small>Corrales</small></div><div><b>480</b><small>Plazas máximas</small></div></div><div class="pen-grid twelve">${Array.from({length:12},(_,i)=>`<div class="pen-tile"><b>Corral ${i+1}</b><small>Capacidad: 40</small><span class="pen-count" data-pen="n3c${i+1}">0 registrados</span></div>`).join("")}</div></article>
+      </div>
+      <article class="panel"><h2>Asignación de animales a corrales</h2><p class="muted">En el inventario, usa el campo “Lote” con el código del corral: N2-C1 a N2-C4 o N3-C1 a N3-C12. La ocupación se calcula con animales activos cuyo lote coincide con esos códigos.</p><div id="penWarnings" class="empty">Se calculará la ocupación al registrar animales.</div></article>
+    </section>
+
+    <section id="page-alimento" class="page hidden">
+      <div class="page-heading"><div><p class="eyebrow">CONSUMO Y ABASTECIMIENTO</p><h1>Alimento y comederos</h1><p class="muted">Bultos de 40 kg, capacidad del comedero y estimación de días de consumo.</p></div><button class="btn primary" id="newFeederBtn">＋ Configurar comedero</button></div>
+      <div class="notice"><b>Ubicación registrada:</b> Guadalupe, Huila, Colombia. El clima puede influir en el consumo, pero no se aplicará un “factor climático” inventado. El ajuste ambiental inicia en 1,00 y puedes cambiarlo según datos reales de tu granja o recomendación técnica.</div>
+      <div class="stats compact"><article class="stat"><span>Consumo diario estimado</span><strong id="feedDaily">0 kg</strong></article><article class="stat"><span>Bultos de 40 kg / día</span><strong id="feedBags">0</strong></article><article class="stat"><span>Comederos configurados</span><strong id="feederCount">0</strong></article></div>
+      <div id="feederList" class="record-list empty">Todavía no has configurado comederos.</div>
+      <article class="panel"><div class="panel-head"><div><h2>Registrar suministro de alimento</h2><p class="muted">Anota cuándo se llenó el comedero y cuánto alimento se añadió.</p></div></div><button class="btn primary" id="newFeedingBtn">＋ Registrar suministro</button><div id="feedingList" class="record-list empty" style="margin-top:14px">Aún no hay suministros registrados.</div></article>
+      <p class="notice">Las estimaciones son una ayuda de planificación, no una ración veterinaria. Ajusta los kg por cerdo/día por etapa, peso, dieta, temperatura y consumo medido. Un bulto equivale a 40 kg.</p>
     </section>
 
     <section id="page-reproduccion" class="page hidden">
