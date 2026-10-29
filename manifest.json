@@ -1,0 +1,10 @@
+{
+  "name": "Porcícola El Olivo",
+  "short_name": "El Olivo",
+  "description": "Gestión local de granja porcina",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#f5f7f4",
+  "theme_color": "#24543d",
+  "icons": []
+}

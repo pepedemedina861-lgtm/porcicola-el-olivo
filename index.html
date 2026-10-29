@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#24543d">
+  <meta name="description" content="Gestión local de granja porcina: inventario, reproducción, salud, alimentación, finanzas y recordatorios.">
+  <link rel="manifest" href="manifest.json">
+  <link rel="stylesheet" href="styles.css">
+  <title>Porcícola El Olivo</title>
+</head>
+<body>
+<header class="topbar">
+  <div class="brand"><div class="logo">🐖</div><div><strong>Porcícola El Olivo</strong><small>Gestión de granja · modo local</small></div></div>
+  <button id="backupBtn" class="btn light">Copia de seguridad</button>
+</header>
+<div class="layout">
+  <aside class="sidebar" aria-label="Navegación">
+    <button class="nav active" data-page="inicio">⌂ <span>Resumen</span></button>
+    <button class="nav" data-page="animales">🐖 <span>Inventario</span></button>
+    <button class="nav" data-page="reproduccion">♡ <span>Reproducción y partos</span></button>
+    <button class="nav" data-page="salud">✚ <span>Salud y alimentación</span></button>
+    <button class="nav" data-page="finanzas">$ <span>Gastos y ventas</span></button>
+    <button class="nav" data-page="recordatorios">◷ <span>Alertas y recordatorios</span></button>
+    <button class="nav" data-page="datos">⇧ <span>Copias y datos</span></button>
+  </aside>
+  <main>
+    <section id="page-inicio" class="page">
+      <div class="page-heading"><div><p class="eyebrow">PANEL GENERAL</p><h1>Resumen de la granja</h1><p class="muted">Tus registros permanecen en este dispositivo.</p></div><span class="local-pill">● Solo almacenamiento local</span></div>
+      <div class="stats">
+        <article class="stat"><span>Animales registrados</span><strong id="statAnimals">0</strong><small>Inventario total</small></article>
+        <article class="stat"><span>Gestaciones activas</span><strong id="statPreg">0</strong><small>Registros de reproducción</small></article>
+        <article class="stat"><span>Alertas pendientes</span><strong id="statAlerts">0</strong><small>Recordatorios no completados</small></article>
+        <article class="stat"><span>Balance registrado</span><strong id="statBalance">$0</strong><small>Ingresos menos gastos</small></article>
+      </div>
+      <div class="content-grid">
+        <article class="panel"><div class="panel-head"><div><h2>Accesos rápidos</h2><p class="muted">Registra una actividad sin buscar el módulo.</p></div></div>
+          <div class="quick-grid">
+            <button class="quick" data-go="animales"><span>🐖</span><b>Nuevo animal</b><small>Ficha e identificación</small></button>
+            <button class="quick" data-go="reproduccion"><span>🐣</span><b>Registrar parto</b><small>Camada y nacimientos</small></button>
+            <button class="quick" data-go="salud"><span>✚</span><b>Salud o alimento</b><small>Tratamientos y consumo</small></button>
+            <button class="quick" data-go="finanzas"><span>🧾</span><b>Movimiento financiero</b><small>Compra, gasto o venta</small></button>
+          </div>
+        </article>
+        <article class="panel"><div class="panel-head"><div><h2>Próximos recordatorios</h2><p class="muted">Fechas más cercanas.</p></div><button class="text-btn" data-go="recordatorios">Ver todos →</button></div><div id="upcomingList" class="empty">Todavía no hay recordatorios.</div></article>
+      </div>
+      <article class="panel"><div class="panel-head"><div><h2>Actividad reciente</h2><p class="muted">Últimos registros guardados.</p></div></div><div id="recentList" class="empty">Aún no hay actividad.</div></article>
+      <p class="notice"><b>Importante:</b> esta versión inicial guarda datos en el almacenamiento del navegador. Exporta copias regularmente y no borres los datos del sitio. La versión local no sincroniza automáticamente con otros dispositivos.</p>
+    </section>
+
+    <section id="page-animales" class="page hidden">
+      <div class="page-heading"><div><p class="eyebrow">REGISTRO INDIVIDUAL</p><h1>Inventario de animales</h1><p class="muted">Identificación, categoría, lote, peso y estado.</p></div><button class="btn primary" id="newAnimalBtn">＋ Nuevo animal</button></div>
+      <div class="toolbar"><input id="animalSearch" placeholder="Buscar por arete, nombre o lote…"><select id="animalFilter"><option value="">Todas las categorías</option><option>Lechón</option><option>Reemplazo</option><option>Cerda reproductora</option><option>Verraco</option><option>Engorde</option><option>Otro</option></select></div>
+      <div class="table-wrap"><table><thead><tr><th>ID / Arete</th><th>Categoría</th><th>Lote</th><th>Sexo</th><th>Peso (kg)</th><th>Estado</th><th></th></tr></thead><tbody id="animalsBody"></tbody></table></div>
+      <div id="animalEmpty" class="empty hidden">No hay animales que coincidan. Añade el primero con «Nuevo animal».</div>
+    </section>
+
+    <section id="page-reproduccion" class="page hidden">
+      <div class="page-heading"><div><p class="eyebrow">CICLO REPRODUCTIVO</p><h1>Reproducción y partos</h1><p class="muted">Montas, inseminaciones, gestaciones y resultados de parto.</p></div><button class="btn primary" id="newReproBtn">＋ Nuevo registro</button></div>
+      <div class="toolbar"><input id="reproSearch" placeholder="Buscar por ID de cerda o lote…"><select id="reproFilter"><option value="">Todos los registros</option><option>Gestación</option><option>Parto</option><option>Destete</option><option>Montaje</option><option>Inseminación</option></select></div>
+      <div id="reproList" class="record-list empty">Aún no hay registros reproductivos.</div>
+    </section>
+
+    <section id="page-salud" class="page hidden">
+      <div class="page-heading"><div><p class="eyebrow">MANEJO DIARIO</p><h1>Salud y alimentación</h1><p class="muted">Vacunas, tratamientos, síntomas, pesajes y alimento.</p></div><button class="btn primary" id="newHealthBtn">＋ Nuevo registro</button></div>
+      <div class="toolbar"><input id="healthSearch" placeholder="Buscar por animal, tipo o detalle…"><select id="healthFilter"><option value="">Todos los tipos</option><option>Vacuna</option><option>Tratamiento</option><option>Enfermedad / síntoma</option><option>Pesaje</option><option>Alimentación</option><option>Otro</option></select></div>
+      <div id="healthList" class="record-list empty">Aún no hay registros de salud o alimentación.</div>
+    </section>
+
+    <section id="page-finanzas" class="page hidden">
+      <div class="page-heading"><div><p class="eyebrow">CONTROL ECONÓMICO</p><h1>Gastos, ventas y ganancias</h1><p class="muted">Registra ingresos y egresos para conocer el balance.</p></div><button class="btn primary" id="newFinanceBtn">＋ Nuevo movimiento</button></div>
+      <div class="stats compact"><article class="stat"><span>Ingresos</span><strong id="sumIncome">$0</strong></article><article class="stat"><span>Gastos</span><strong id="sumExpense">$0</strong></article><article class="stat"><span>Balance</span><strong id="sumNet">$0</strong></article></div>
+      <div class="toolbar"><input id="financeSearch" placeholder="Buscar por concepto, tercero o categoría…"><select id="financeFilter"><option value="">Todos los movimientos</option><option>Ingreso</option><option>Gasto</option></select></div>
+      <div id="financeList" class="record-list empty">Aún no hay movimientos financieros.</div>
+    </section>
+
+    <section id="page-recordatorios" class="page hidden">
+      <div class="page-heading"><div><p class="eyebrow">TAREAS Y FECHAS</p><h1>Alertas y recordatorios</h1><p class="muted">Programa actividades como vacunas, partos, destetes y compras.</p></div><button class="btn primary" id="newReminderBtn">＋ Nuevo recordatorio</button></div>
+      <div class="toolbar"><select id="reminderFilter"><option value="">Todos</option><option value="pending">Pendientes</option><option value="done">Completados</option></select></div>
+      <div id="reminderList" class="record-list empty">Aún no hay recordatorios.</div>
+      <p class="notice">Las alertas de esta versión aparecen dentro de la aplicación. Las notificaciones del sistema en iPhone dependen de permisos, instalación y compatibilidad del navegador; no se garantiza una alarma si la app está cerrada.</p>
+    </section>
+
+    <section id="page-datos" class="page hidden">
+      <div class="page-heading"><div><p class="eyebrow">PROTECCIÓN DE REGISTROS</p><h1>Copias y datos</h1><p class="muted">Guarda una copia externa o restaura un archivo exportado anteriormente.</p></div></div>
+      <div class="content-grid">
+        <article class="panel"><h2>Crear copia de seguridad</h2><p class="muted">Descarga un archivo JSON con animales y todos los registros de la app.</p><button id="exportBtn" class="btn primary">Descargar copia JSON</button><button id="exportCsvBtn" class="btn light">Exportar inventario CSV</button></article>
+        <article class="panel"><h2>Restaurar copia</h2><p class="muted">Importa una copia JSON creada por esta app. La restauración reemplazará los registros actuales.</p><label class="file-label">Elegir archivo JSON<input type="file" id="importFile" accept=".json,application/json"></label><p id="importStatus" class="muted"></p></article>
+      </div>
+      <article class="panel"><h2>Información de almacenamiento</h2><p>Los datos están guardados en el navegador de este dispositivo mediante IndexedDB. No se envían a Supabase en esta versión local.</p><p class="muted">Para más de 1.000 animales, IndexedDB es más apropiado que guardar todo en una sola clave de almacenamiento. Aun así, debes hacer copias externas con frecuencia.</p><button id="clearBtn" class="btn danger">Borrar todos los datos locales</button></article>
+    </section>
+  </main>
+</div>
+
+<dialog id="recordDialog">
+  <form id="recordForm" method="dialog">
+    <div class="modal-head"><div><p class="eyebrow" id="formEyebrow">REGISTRO</p><h2 id="formTitle">Nuevo registro</h2></div><button type="button" class="icon-btn" id="closeDialog" aria-label="Cerrar">✕</button></div>
+    <div id="formFields" class="form-grid"></div>
+    <p id="formError" class="error"></p>
+    <div class="modal-actions"><button type="button" class="btn light" id="cancelForm">Cancelar</button><button type="submit" class="btn primary">Guardar registro</button></div>
+  </form>
+</dialog>
+<input id="backupFile" type="file" accept=".json,application/json" hidden>
+<div id="toast" role="status" class="toast hidden"></div>
+<script src="app.js"></script>
+</body>
+</html>
