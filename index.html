@@ -23,12 +23,18 @@
     <button class="nav" data-page="reproduccion">♡ <span>Reproducción y partos</span></button>
     <button class="nav" data-page="salud">✚ <span>Salud y alimentación</span></button>
     <button class="nav" data-page="finanzas">$ <span>Gastos y ventas</span></button>
+    <button class="nav" data-page="calendario">▦ <span>Calendario</span></button>
     <button class="nav" data-page="recordatorios">◷ <span>Alertas y recordatorios</span></button>
     <button class="nav" data-page="datos">⇧ <span>Copias y datos</span></button>
   </aside>
   <main>
     <section id="page-inicio" class="page">
       <div class="page-heading"><div><p class="eyebrow">PANEL GENERAL</p><h1>Resumen de la granja</h1><p class="muted">Tus registros permanecen en este dispositivo.</p></div><span class="local-pill">● Datos locales · Guadalupe, Huila</span></div>
+      <section class="farm-hero">
+        <img src="logo-el-olivo.png" alt="Logo Porcícola El Olivo" class="hero-logo">
+        <div class="farm-hero-copy"><span>GUADALUPE · HUILA</span><h2>Una granja organizada, cerdo por cerdo.</h2><p>Controla lotes, corrales, reproducción y sanidad desde un solo lugar.</p></div>
+        <img class="hero-photo" src="https://images.unsplash.com/photo-1516467508483-a7212febe31a?auto=format&fit=crop&w=900&q=80" alt="Cerdos en una granja" loading="lazy">
+      </section>
       <div class="stats">
         <article class="stat"><span>Animales registrados</span><strong id="statAnimals">0</strong><small>Inventario total</small></article>
         <article class="stat"><span>Gestaciones activas</span><strong id="statPreg">0</strong><small>Registros de reproducción</small></article>
@@ -65,7 +71,7 @@
         <article class="barn-card"><div class="barn-top"><span class="barn-icon">🐖</span><span class="barn-label">ENGORDE</span></div><h2>Nave 2</h2><p>Cuatro corrales con capacidad de 50 cerdos cada uno.</p><div class="barn-stats"><div><b>4</b><small>Corrales</small></div><div><b>200</b><small>Plazas máximas</small></div></div><div class="pen-grid"><div class="pen-tile"><b>Corral 1</b><small>Capacidad: 50</small><span class="pen-count" data-pen="n2c1">0/50 registrados</span></div><div class="pen-tile"><b>Corral 2</b><small>Capacidad: 50</small><span class="pen-count" data-pen="n2c2">0/50 registrados</span></div><div class="pen-tile"><b>Corral 3</b><small>Capacidad: 50</small><span class="pen-count" data-pen="n2c3">0/50 registrados</span></div><div class="pen-tile"><b>Corral 4</b><small>Capacidad: 50</small><span class="pen-count" data-pen="n2c4">0/50 registrados</span></div></div></article>
         <article class="barn-card"><div class="barn-top"><span class="barn-icon">🐗</span><span class="barn-label">ENGORDE</span></div><h2>Nave 3</h2><p>Doce corrales con capacidad de 40 cerdos cada uno.</p><div class="barn-stats"><div><b>12</b><small>Corrales</small></div><div><b>480</b><small>Plazas máximas</small></div></div><div class="pen-grid twelve"><div class="pen-tile"><b>Corral 1</b><small>Capacidad: 40</small><span class="pen-count" data-pen="n3c1">0/40 registrados</span></div><div class="pen-tile"><b>Corral 2</b><small>Capacidad: 40</small><span class="pen-count" data-pen="n3c2">0/40 registrados</span></div><div class="pen-tile"><b>Corral 3</b><small>Capacidad: 40</small><span class="pen-count" data-pen="n3c3">0/40 registrados</span></div><div class="pen-tile"><b>Corral 4</b><small>Capacidad: 40</small><span class="pen-count" data-pen="n3c4">0/40 registrados</span></div><div class="pen-tile"><b>Corral 5</b><small>Capacidad: 40</small><span class="pen-count" data-pen="n3c5">0/40 registrados</span></div><div class="pen-tile"><b>Corral 6</b><small>Capacidad: 40</small><span class="pen-count" data-pen="n3c6">0/40 registrados</span></div><div class="pen-tile"><b>Corral 7</b><small>Capacidad: 40</small><span class="pen-count" data-pen="n3c7">0/40 registrados</span></div><div class="pen-tile"><b>Corral 8</b><small>Capacidad: 40</small><span class="pen-count" data-pen="n3c8">0/40 registrados</span></div><div class="pen-tile"><b>Corral 9</b><small>Capacidad: 40</small><span class="pen-count" data-pen="n3c9">0/40 registrados</span></div><div class="pen-tile"><b>Corral 10</b><small>Capacidad: 40</small><span class="pen-count" data-pen="n3c10">0/40 registrados</span></div><div class="pen-tile"><b>Corral 11</b><small>Capacidad: 40</small><span class="pen-count" data-pen="n3c11">0/40 registrados</span></div><div class="pen-tile"><b>Corral 12</b><small>Capacidad: 40</small><span class="pen-count" data-pen="n3c12">0/40 registrados</span></div></div></article>
       </div>
-      <article class="panel"><h2>Capacidad actual de cada corral</h2><p class="muted">Configura la capacidad real para cada área. La ocupación se calcula automáticamente a partir de los animales activos asignados.</p><div id="penManagement" class="pen-management"></div></article><article class="panel"><h2>Asignación de animales a corrales</h2><p class="muted">En el inventario, usa el campo “Lote” con el código del corral: N2-C1 a N2-C4 o N3-C1 a N3-C12. La ocupación se calcula con animales activos cuyo lote coincide con esos códigos.</p><div id="penWarnings" class="empty">Se calculará la ocupación al registrar animales.</div></article>
+      <article class="panel"><h2>Capacidad actual de cada corral</h2><p class="muted">Configura la capacidad real para cada área. La ocupación se calcula automáticamente a partir de los animales activos asignados.</p><div id="penManagement" class="pen-management"></div></article><article class="panel"><h2>Asignación de animales a corrales</h2><p class="muted">Edita el nombre y la capacidad de cada área. La ocupación se calcula usando la ubicación actual asignada a cada animal en su ficha.</p><div id="penWarnings" class="empty">Se calculará la ocupación al registrar animales.</div></article>
     </section>
 
     <section id="page-alimento" class="page hidden">
@@ -94,6 +100,20 @@
       <div class="stats compact"><article class="stat"><span>Ingresos</span><strong id="sumIncome">$0</strong></article><article class="stat"><span>Gastos</span><strong id="sumExpense">$0</strong></article><article class="stat"><span>Balance</span><strong id="sumNet">$0</strong></article></div>
       <div class="toolbar"><input id="financeSearch" placeholder="Buscar por concepto, tercero o categoría…"><select id="financeFilter"><option value="">Todos los movimientos</option><option>Ingreso</option><option>Gasto</option></select></div>
       <div id="financeList" class="record-list empty">Aún no hay movimientos financieros.</div>
+    </section>
+
+    <section id="page-calendario" class="page hidden">
+      <div class="page-heading"><div><p class="eyebrow">PLANIFICACIÓN DE LA GRANJA</p><h1>Calendario de eventos</h1><p class="muted">Reproducción, salud, inmunocastración y recordatorios en un solo calendario.</p></div><button class="btn primary" data-go="recordatorios">＋ Nuevo evento</button></div>
+      <div class="calendar-banner"><img src="https://images.unsplash.com/photo-1516467508483-a7212febe31a?auto=format&fit=crop&w=800&q=80" alt="Cerdos en la granja" loading="lazy"><div><span>EL OLIVO · AGENDA</span><h2>Que ninguna fecha importante se pase.</h2><p>Los eventos se generan desde tus registros y recordatorios guardados.</p></div></div>
+      <div class="calendar-layout">
+        <article class="panel calendar-panel">
+          <div class="calendar-toolbar"><button id="calendarToday" class="btn light">Hoy</button><div class="calendar-month-controls"><button id="calendarPrev" class="calendar-arrow" aria-label="Mes anterior">‹</button><h2 id="calendarMonth">Mes</h2><button id="calendarNext" class="calendar-arrow" aria-label="Mes siguiente">›</button></div><label class="calendar-date-label">Ver día <input type="date" id="calendarSelectedDate"></label></div>
+          <div class="calendar-legend"><span><i class="repro"></i>Reproducción</span><span><i class="health"></i>Sanidad</span><span><i class="feed"></i>Alimentación</span><span><i class="move"></i>Traslados</span><span><i class="other"></i>Otros</span></div>
+          <div class="calendar-weekdays"><span>Dom</span><span>Lun</span><span>Mar</span><span>Mié</span><span>Jue</span><span>Vie</span><span>Sáb</span></div>
+          <div id="calendarGrid" class="calendar-grid"></div>
+        </article>
+        <aside class="panel calendar-agenda"><div class="panel-head"><div><p class="eyebrow">AGENDA DEL DÍA</p><h2 id="calendarDayTitle">Eventos</h2></div><span class="agenda-icon">♡</span></div><div id="calendarDayList" class="calendar-day-list"></div></aside>
+      </div>
     </section>
 
     <section id="page-recordatorios" class="page hidden">

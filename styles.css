@@ -38,3 +38,33 @@
 .pen-manage-row{display:grid;grid-template-columns:minmax(0,2fr) minmax(90px,1fr) auto auto;gap:12px;align-items:center;border:1px solid var(--line);background:#faf9f4;padding:12px;border-radius:10px}
 .pen-manage-name b,.pen-manage-count b{display:block;font-size:12px}.pen-manage-name small,.pen-manage-count small{display:block;color:var(--muted);font-size:10px;margin-top:4px}
 @media(max-width:650px){.heading-actions{width:100%}.heading-actions .btn{flex:1}.pen-manage-row{grid-template-columns:1fr auto;gap:8px}.pen-manage-count{grid-column:1}.pen-manage-row .tag{grid-column:1/-1;width:max-content}}
+
+
+/* Panel visual renovado y calendario interactivo */
+.farm-hero{display:grid;grid-template-columns:82px minmax(0,1fr) minmax(180px,32%);gap:20px;align-items:center;overflow:hidden;background:linear-gradient(110deg,#303a22,#667044 58%,#85734b);color:#fff;border-radius:18px;margin-bottom:20px;min-height:150px;padding:20px;box-shadow:0 12px 30px #42381d20}
+.hero-logo{width:78px;height:78px;object-fit:contain;border-radius:50%;border:2px solid #d9c58b;background:#392f20}
+.farm-hero-copy span,.calendar-banner span{font-size:10px;font-weight:800;letter-spacing:1.5px;color:#e5d39b}
+.farm-hero-copy h2{font:800 clamp(18px,2vw,25px) Manrope,sans-serif;margin:8px 0;line-height:1.2}
+.farm-hero-copy p{font-size:12px;line-height:1.5;color:#f0ead7;margin:0;max-width:500px}
+.hero-photo{width:100%;height:112px;object-fit:cover;border-radius:12px;border:2px solid #ffffff50}
+.calendar-banner{display:flex;align-items:center;gap:20px;background:#f0ead9;border:1px solid #dfd2b5;border-radius:16px;overflow:hidden;margin-bottom:18px}
+.calendar-banner img{width:190px;height:130px;object-fit:cover}
+.calendar-banner div{padding:14px 18px 14px 0}
+.calendar-banner span{color:#7a633f}.calendar-banner h2{font:800 20px Manrope,sans-serif;margin:7px 0;color:#403522}.calendar-banner p{font-size:12px;color:#756b5c;margin:0;line-height:1.5}
+.calendar-layout{display:grid;grid-template-columns:minmax(0,1.7fr) minmax(250px,.8fr);gap:16px;align-items:start}
+.calendar-panel{padding:18px;min-width:0}
+.calendar-toolbar{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:15px}
+.calendar-month-controls{display:flex;align-items:center;gap:10px}.calendar-month-controls h2{margin:0;text-transform:capitalize;font-size:17px}
+.calendar-arrow{width:34px;height:34px;border:1px solid var(--line);border-radius:10px;background:#faf8f1;color:#5a4b32;font-size:25px;line-height:1}
+.calendar-date-label{display:flex;align-items:center;gap:7px;color:var(--muted);font-size:11px}.calendar-date-label input{padding:7px;font-size:11px;max-width:145px}
+.calendar-legend{display:flex;flex-wrap:wrap;gap:12px;margin:0 0 14px}.calendar-legend span{display:flex;align-items:center;gap:5px;font-size:10px;color:var(--muted)}.calendar-legend i{width:8px;height:8px;border-radius:50%;display:inline-block}.calendar-legend .repro{background:#db7d8e}.calendar-legend .health{background:#5692c5}.calendar-legend .feed{background:#d8a43e}.calendar-legend .move{background:#5ca17b}.calendar-legend .other{background:#a18bcb}
+.calendar-weekdays,.calendar-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr))}
+.calendar-weekdays span{text-align:center;font-size:10px;font-weight:800;color:#7b705f;padding:10px 2px;background:#f7f4eb;border:1px solid #ebe5d8}
+.calendar-day{appearance:none;text-align:left;min-width:0;min-height:91px;border:1px solid #ebe5d8;background:#fffdf8;padding:6px 5px;display:flex;flex-direction:column;gap:4px;color:var(--ink)}
+.calendar-day:hover{background:#f5f1e3}.calendar-day.outside{background:#faf9f5;color:#b5ad9f}.calendar-day.is-today{box-shadow:inset 0 0 0 2px #667044;background:#f2f4e9}
+.day-number{font-size:11px;font-weight:800}.is-today .day-number{background:#667044;color:white;border-radius:50%;width:22px;height:22px;display:grid;place-items:center}
+.day-events{display:grid;gap:3px;min-width:0}.calendar-event{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;border-radius:4px;padding:3px 4px;font-size:9px;font-weight:700}
+.calendar-event.repro{background:#fbe5e9;color:#914c5b}.calendar-event.health{background:#e2eff9;color:#2f638c}.calendar-event.feed{background:#fff0cf;color:#88621d}.calendar-event.move{background:#e0f1e5;color:#326d4a}.calendar-event.other{background:#eee7fa;color:#66508a}.day-events small{font-size:9px;color:var(--muted)}
+.calendar-agenda{position:sticky;top:92px}.agenda-icon{width:38px;height:38px;border-radius:12px;background:#f7e4e6;color:#a25363;display:grid;place-items:center;font-size:22px}.calendar-day-list{display:grid;gap:10px}.calendar-agenda-item{display:flex;gap:10px;padding:12px;border-radius:11px;background:#faf8f2;border:1px solid #eee7d8}.agenda-dot{flex:0 0 9px;width:9px;height:9px;border-radius:50%;margin-top:5px;background:#a18bcb}.calendar-agenda-item.repro .agenda-dot{background:#db7d8e}.calendar-agenda-item.health .agenda-dot{background:#5692c5}.calendar-agenda-item.feed .agenda-dot{background:#d8a43e}.calendar-agenda-item.move .agenda-dot{background:#5ca17b}.calendar-agenda-item b{font-size:12px}.calendar-agenda-item p{margin:4px 0;font-size:11px;color:var(--muted)}.calendar-agenda-item small{font-size:10px;color:#756b5c;line-height:1.4}
+@media(max-width:1000px){.calendar-layout{grid-template-columns:1fr}.calendar-agenda{position:static}.farm-hero{grid-template-columns:70px minmax(0,1fr) 25%}.hero-photo{height:105px}}
+@media(max-width:650px){.farm-hero{grid-template-columns:56px minmax(0,1fr);gap:12px;padding:14px}.hero-logo{width:54px;height:54px}.hero-photo{display:none}.farm-hero-copy h2{font-size:17px}.calendar-banner img{width:105px;height:125px}.calendar-banner{gap:12px}.calendar-banner h2{font-size:16px}.calendar-banner div{padding:12px 10px 12px 0}.calendar-toolbar{align-items:flex-start}.calendar-date-label{width:100%;justify-content:space-between}.calendar-date-label input{max-width:none;flex:1}.calendar-day{min-height:66px;padding:4px 2px}.calendar-event{font-size:7px;padding:2px}.calendar-weekdays span{font-size:9px;padding:7px 0}.calendar-legend{gap:8px}.calendar-legend span{font-size:9px}}

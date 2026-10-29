@@ -1,7 +1,7 @@
 /* Porcícola El Olivo — PWA local-first. Datos en IndexedDB; no se transmiten a ningún servidor. */
 const DB_NAME = "elOlivoPorcinaDB", DB_VERSION = 4;
 const STORES = ["animals","repro","health","finance","reminders","feeders","feedings","pens"];
-let db, currentType = null, editingId = null;
+let db, currentType = null, editingId = null, calendarCursor = new Date(new Date().getFullYear(), new Date().getMonth(), 1), cachedPens = [];
 const $ = id => document.getElementById(id);
 const money = n => new Intl.NumberFormat("es-CO",{style:"currency",currency:"COP",maximumFractionDigits:0}).format(Number(n||0));
 const today = () => new Date().toISOString().slice(0,10);
@@ -15,9 +15,9 @@ function toast(msg){const t=$("toast");t.textContent=msg;t.classList.remove("hid
 function safe(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
 function field(name,label,type="text",opts={}){return {name,label,type,...opts};}
 const PEN_DEFS = [
- {id:"timbo-gestacion",name:"Timbo gestación",barn:"Nave 1"},
- {id:"timbo-macho",name:"Timbo macho reproductor",barn:"Nave 1"},
- {id:"timbo-lactancia",name:"Timbo lactancia",barn:"Nave 1"},
+ {id:"timbo-gestacion",name:"Gestación",barn:"Nave 1"},
+ {id:"timbo-macho",name:"Macho reproductor",barn:"Nave 1"},
+ {id:"timbo-lactancia",name:"Maternidad / Lactancia",barn:"Nave 1"},
  {id:"precebo-1",name:"Precebo 1",barn:"Nave 1"},
  {id:"precebo-2",name:"Precebo 2",barn:"Nave 1"},
  {id:"precebo-3",name:"Precebo 3",barn:"Nave 1"},
@@ -26,7 +26,7 @@ const PEN_DEFS = [
  ...Array.from({length:4},(_,i)=>({id:`n2-c${i+1}`,name:`Nave 2 · Corral ${i+1}`,barn:"Nave 2"})),
  ...Array.from({length:12},(_,i)=>({id:`n3-c${i+1}`,name:`Nave 3 · Corral ${i+1}`,barn:"Nave 3"}))
 ];
-function penLabel(id){return PEN_DEFS.find(p=>p.id===id)?.name || id || "Sin ubicación";}
+function penLabel(id){return cachedPens.find(p=>p.id===id)?.name || PEN_DEFS.find(p=>p.id===id)?.name || id || "Sin ubicación";}
 function birthDateFromAge(ageDays, referenceDate=today()){const d=new Date(referenceDate+"T12:00:00");d.setDate(d.getDate()-Number(ageDays||0));return d.toISOString().slice(0,10);}
 const schemas={
  intake:{title:"ingreso de animales por lote",eyebrow:"INGRESO MASIVO",fields:[
@@ -212,7 +212,7 @@ async function renderFeeders(){
 }
 async function renderPenOccupancy(){
  const animals=(await all("animals")).filter(a=>!["Vendido","Fallecido","Descartado"].includes(a.status));
- const pens=await all("pens");const counts={};animals.forEach(a=>{if(a.penId)counts[a.penId]=(counts[a.penId]||0)+1;});
+ const pens=await all("pens");cachedPens=pens;const counts={};animals.forEach(a=>{if(a.penId)counts[a.penId]=(counts[a.penId]||0)+1;});
  const warnings=[];
  const manager=$("penManagement");
  if(manager){manager.innerHTML=pens.map(p=>{const n=counts[p.id]||0,cap=Number(p.capacity||0),over=cap>0&&n>cap;return `<div class="pen-manage-row"><div class="pen-manage-name"><b>${safe(p.name)}</b><small>${safe(p.barn||"")}</small></div><div class="pen-manage-count"><b>${n}${cap>0?"/"+cap:""}</b><small>ocupados${cap>0?` · ${Math.max(0,cap-n)} disponibles`:" · capacidad sin definir"}</small></div><button class="mini-btn" data-edit="pens" data-id="${p.id}">Capacidad</button>${over?'<span class="tag red">Sobre capacidad</span>':""}</div>`;}).join("");}
@@ -236,12 +236,62 @@ function reproMeta(x){
  if(x.heatReturnRisk&&x.heatReturnRisk!=="Sin evaluar")bits.push("Seguimiento de celo: "+x.heatReturnRisk);
  return bits.join(" · ");
 }
-async function refreshAll(){await Promise.all([renderAnimals(),renderGeneric("repro","reproList","reproSearch","reproFilter",["sowTag","boarTag","litterId","notes"],x=>`${x.kind} · Cerda ${x.sowTag}`,x=>reproMeta(x),x=>[`Nacidos vivos: ${x.bornAlive||0}`,`Muertos: ${x.bornDead||0}`,`Destetados: ${x.weaned||0}`,x.notes].filter(Boolean).join(" · ")),renderGeneric("health","healthList","healthSearch","healthFilter",["animalTag","kind","product","notes"],x=>`${x.kind} · ${x.animalTag}`,x=>`${x.date||""}${x.product?" · "+x.product:""}`,x=>[x.quantity?`${x.quantity} ${x.unit||""}`:"",x.cost?`Costo ${money(x.cost)}`:"",x.nextDate?`Próximo control: ${x.nextDate}`:"",x.notes].filter(Boolean).join(" · ")),renderFinance(),renderReminders(),renderFeeders(),renderPenOccupancy(),renderPenOverview(),refreshDashboard()]);}
+
+function monthLabel(d){return d.toLocaleDateString("es-CO",{month:"long",year:"numeric"});}
+function dateISO(d){return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;}
+async function calendarEvents(){
+ const [reminders,repro,health,animals]=await Promise.all([all("reminders"),all("repro"),all("health"),all("animals")]);
+ const events=[];
+ reminders.filter(x=>!x.done&&x.date).forEach(x=>events.push({date:x.date,title:x.title,kind:calendarKind(x.title),detail:x.animalTag||"",notes:x.notes||"",source:"reminders",id:x.id}));
+ repro.forEach(x=>{
+  const service=x.serviceDate||(["Montaje","Inseminación"].includes(x.kind)?x.date:"");
+  if(service&&!["No preñada / repitió celo","Parto realizado"].includes(x.pregnancyStatus)){
+   events.push({date:addDaysISO(service,24),title:"Fin de ventana de retorno a celo",kind:"repro",detail:`Cerda ${x.sowTag||""}`,notes:"Registrar si hubo retorno a celo.",source:"repro",id:x.id});
+   if(x.pregnancyStatus==="Preñada confirmada")events.push({date:x.dueDate||addDaysISO(service,114),title:"Parto probable",kind:"repro",detail:`Cerda ${x.sowTag||""}`,notes:"Fecha estimada; confirmar con el equipo responsable.",source:"repro",id:x.id});
+  }
+  if(x.kind==="Parto")events.push({date:x.date,title:"Parto registrado",kind:"repro",detail:`Cerda ${x.sowTag||""}`,notes:x.notes||"",source:"repro",id:x.id});
+  if(x.kind==="Destete")events.push({date:x.date,title:"Destete registrado",kind:"other",detail:`Cerda ${x.sowTag||""}`,notes:x.notes||"",source:"repro",id:x.id});
+ });
+ health.filter(x=>x.nextDate).forEach(x=>events.push({date:x.nextDate,title:`Control: ${x.kind}`,kind:"health",detail:x.animalTag||"",notes:x.product||x.notes||"",source:"health",id:x.id}));
+ animals.filter(x=>x.castrationNextDate&&!["Vendido","Fallecido","Descartado"].includes(x.status)).forEach(x=>events.push({date:x.castrationNextDate,title:"Seguimiento de inmunocastración",kind:"health",detail:`${x.tag} · ${x.lot||"Sin lote"}`,notes:x.castrationProduct||"Verificar etiqueta y plan veterinario.",source:"animals",id:x.id}));
+ return events.filter(e=>e.date).sort((a,b)=>a.date.localeCompare(b.date));
+}
+function calendarKind(title=""){const t=title.toLowerCase();if(/celo|parto|gestación|insemin|monta|reprodu/.test(t))return "repro";if(/vacun|sanidad|salud|inmunocastr|tratamiento|control/.test(t))return "health";if(/alimento|comida|comedero/.test(t))return "feed";if(/traslado|lote|corral/.test(t))return "move";return "other";}
+async function renderCalendar(){
+ const grid=$("calendarGrid");if(!grid)return;
+ const events=await calendarEvents(),year=calendarCursor.getFullYear(),month=calendarCursor.getMonth();
+ $("calendarMonth").textContent=monthLabel(calendarCursor);
+ const first=new Date(year,month,1),startDay=first.getDay(),days=new Date(year,month+1,0).getDate();
+ const prevDays=new Date(year,month,0).getDate(),cells=[];
+ for(let i=0;i<42;i++){
+  let dayNum,cellDate,other=false;
+  if(i<startDay){dayNum=prevDays-startDay+i+1;cellDate=new Date(year,month-1,dayNum);other=true;}
+  else if(i>=startDay+days){dayNum=i-(startDay+days)+1;cellDate=new Date(year,month+1,dayNum);other=true;}
+  else {dayNum=i-startDay+1;cellDate=new Date(year,month,dayNum);}
+  const iso=dateISO(cellDate),dayEvents=events.filter(e=>e.date===iso);
+  cells.push(`<button class="calendar-day ${other?"outside":""} ${iso===today()?"is-today":""}" data-calendar-date="${iso}"><span class="day-number">${dayNum}</span><span class="day-events">${dayEvents.slice(0,3).map(ev=>`<span class="calendar-event ${ev.kind}">${safe(ev.title)}</span>`).join("")}${dayEvents.length>3?`<small>+${dayEvents.length-3} más</small>`:""}</span></button>`);
+ }
+ grid.innerHTML=cells.join("");
+ const selected=$("calendarSelectedDate")?.value||today();
+ const shown=events.filter(e=>e.date===selected);
+ $("calendarDayTitle").textContent="Eventos del "+new Date(selected+"T12:00:00").toLocaleDateString("es-CO",{day:"numeric",month:"long",year:"numeric"});
+ $("calendarDayList").innerHTML=shown.length?shown.map(e=>`<article class="calendar-agenda-item ${e.kind}"><span class="agenda-dot"></span><div><b>${safe(e.title)}</b><p>${safe(e.detail||"Actividad de la granja")}</p>${e.notes?`<small>${safe(e.notes)}</small>`:""}</div></article>`).join(""):'<div class="empty">No hay eventos para esta fecha. Selecciona otro día o registra una actividad.</div>';
+}
+
+async function migratePenNames(){
+ const current=await all("pens");
+ if(!current.length){
+  for(const p of PEN_DEFS){const capacity=p.id.startsWith("n2-c")?50:(p.id.startsWith("n3-c")?40:0);await put("pens",{...p,capacity,notes:""});}
+ }else{
+  for(const def of PEN_DEFS){const old=current.find(p=>p.id===def.id);if(old){await put("pens",{...old,name:old.name==="Timbo gestación"?"Gestación":old.name==="Timbo macho reproductor"?"Macho reproductor":old.name==="Timbo lactancia"?"Maternidad / Lactancia":old.name||def.name,barn:old.barn||def.barn,capacity:old.capacity===undefined?(def.id.startsWith("n2-c")?50:def.id.startsWith("n3-c")?40:0):old.capacity});}else{await put("pens",{...def,capacity:def.id.startsWith("n2-c")?50:def.id.startsWith("n3-c")?40:0,notes:""});}}
+ }
+}
+async function refreshAll(){await Promise.all([renderAnimals(),renderGeneric("repro","reproList","reproSearch","reproFilter",["sowTag","boarTag","litterId","notes"],x=>`${x.kind} · Cerda ${x.sowTag}`,x=>reproMeta(x),x=>[`Nacidos vivos: ${x.bornAlive||0}`,`Muertos: ${x.bornDead||0}`,`Destetados: ${x.weaned||0}`,x.notes].filter(Boolean).join(" · ")),renderGeneric("health","healthList","healthSearch","healthFilter",["animalTag","kind","product","notes"],x=>`${x.kind} · ${x.animalTag}`,x=>`${x.date||""}${x.product?" · "+x.product:""}`,x=>[x.quantity?`${x.quantity} ${x.unit||""}`:"",x.cost?`Costo ${money(x.cost)}`:"",x.nextDate?`Próximo control: ${x.nextDate}`:"",x.notes].filter(Boolean).join(" · ")),renderFinance(),renderReminders(),renderFeeders(),renderPenOccupancy(),renderPenOverview(),renderCalendar(),refreshDashboard()]);}
 
 async function renderPenOverview(){
  const pens=await all("pens"),animals=await all("animals");
  const el=$("penOverview");if(!el)return;
- const orderedPens=PEN_DEFS.map(def=>pens.find(p=>p.id===def.id)||({...def,capacity:0}));el.innerHTML=orderedPens.map(p=>{const active=animals.filter(a=>a.penId===p.id&&!["Vendido","Fallecido","Descartado"].includes(a.status));const males=active.filter(a=>a.sex==="Macho").length,females=active.filter(a=>a.sex==="Hembra").length;const capacity=Number(p.capacity||0),pct=capacity?Math.min(100,active.length/capacity*100):0;return `<article class="pen-overview-card"><div class="pen-overview-head"><div><h3>${safe(p.name)}</h3><small>${safe(p.barn)}</small></div><span class="tag">${active.length}${capacity?` / ${capacity}`:" registrados"}</span></div><div class="capacity-bar"><span style="width:${pct}%"></span></div><div class="pen-overview-foot"><span>♂ ${males} · ♀ ${females}</span><span>${capacity?`${Math.max(0,capacity-active.length)} plazas libres`:"Capacidad sin configurar"}</span></div><button class="mini-btn" data-capacity="${p.id}">Editar capacidad</button></article>`;}).join("");
+ const orderedPens=PEN_DEFS.map(def=>pens.find(p=>p.id===def.id)||({...def,capacity:0}));el.innerHTML=orderedPens.map(p=>{const active=animals.filter(a=>a.penId===p.id&&!["Vendido","Fallecido","Descartado"].includes(a.status));const males=active.filter(a=>a.sex==="Macho").length,females=active.filter(a=>a.sex==="Hembra").length;const capacity=Number(p.capacity||0),pct=capacity?Math.min(100,active.length/capacity*100):0;return `<article class="pen-overview-card"><div class="pen-overview-head"><div><h3>${safe(p.name)}</h3><small>${safe(p.barn)}</small></div><span class="tag">${active.length}${capacity?` / ${capacity}`:" registrados"}</span></div><div class="capacity-bar"><span style="width:${pct}%"></span></div><div class="pen-overview-foot"><span>♂ ${males} · ♀ ${females}</span><span>${capacity?`${Math.max(0,capacity-active.length)} plazas libres`:"Capacidad sin configurar"}</span></div><button class="mini-btn" data-edit="pens" data-id="${p.id}">Editar área</button></article>`;}).join("");
 }
 async function configurePens(){
  let pens=await all("pens");
@@ -265,10 +315,17 @@ document.querySelectorAll(".nav").forEach(b=>b.addEventListener("click",()=>show
 $("newAnimalBtn").onclick=()=>openForm("animals");$("newIntakeBtn").onclick=()=>openForm("intake");$("newReproBtn").onclick=()=>openForm("repro");$("newHealthBtn").onclick=()=>openForm("health");$("newFinanceBtn").onclick=()=>openForm("finance");$("newReminderBtn").onclick=()=>openForm("reminders");$("newFeederBtn").onclick=()=>openForm("feeders");$("newFeedingBtn").onclick=()=>openForm("feedings");
 ["animalSearch","animalFilter","reproSearch","reproFilter","healthSearch","healthFilter","financeSearch","financeFilter","reminderFilter"].forEach(id=>$(id).addEventListener("input",refreshAll));
 document.addEventListener("click",async e=>{const edit=e.target.closest("[data-edit]");if(edit){await editRecord(edit.dataset.edit,edit.dataset.id);return;}const del=e.target.closest("[data-delete]");if(del){await deleteRecord(del.dataset.delete,del.dataset.id);return;}const done=e.target.closest("[data-done]");if(done){const item=(await all("reminders")).find(x=>x.id===done.dataset.done);if(item){item.done=true;item.completedAt=new Date().toISOString();await put("reminders",item);await refreshAll();toast("Recordatorio completado.");}}});
+ 
+$("calendarPrev")?.addEventListener("click",()=>{calendarCursor=new Date(calendarCursor.getFullYear(),calendarCursor.getMonth()-1,1);renderCalendar();});
+$("calendarNext")?.addEventListener("click",()=>{calendarCursor=new Date(calendarCursor.getFullYear(),calendarCursor.getMonth()+1,1);renderCalendar();});
+$("calendarToday")?.addEventListener("click",()=>{calendarCursor=new Date(new Date().getFullYear(),new Date().getMonth(),1);if($("calendarSelectedDate"))$("calendarSelectedDate").value=today();renderCalendar();});
+$("calendarSelectedDate")?.addEventListener("change",()=>renderCalendar());
+document.addEventListener("click",e=>{const day=e.target.closest("[data-calendar-date]");if(day){if($("calendarSelectedDate"))$("calendarSelectedDate").value=day.dataset.calendarDate;renderCalendar();}});
+
 function download(name,content,type){const blob=new Blob([content],{type}),url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(url),1500);}
 async function exportJSON(){const data={app:"Porcícola El Olivo",schemaVersion:1,exportedAt:new Date().toISOString(),stores:{}};for(const s of STORES)data.stores[s]=await all(s);download(`el-olivo-copia-${today()}.json`,JSON.stringify(data,null,2),"application/json");}
 $("exportBtn").onclick=exportJSON;$("backupBtn").onclick=exportJSON;
 $("exportCsvBtn").onclick=async()=>{const xs=await all("animals"),cols=["tag","name","category","sex","birthDate","lot","weight","status","source","notes"],csv=[cols.join(","),...xs.map(x=>cols.map(c=>`"${String(x[c]??"").replace(/"/g,'""')}"`).join(","))].join("\r\n");download(`inventario-el-olivo-${today()}.csv`,"\ufeff"+csv,"text/csv;charset=utf-8");};
 $("importFile").addEventListener("change",async e=>{const file=e.target.files[0];if(!file)return;try{const data=JSON.parse(await file.text());if(!data.stores||!STORES.every(s=>Array.isArray(data.stores[s])))throw new Error("El archivo no tiene el formato esperado.");if(!confirm("Esto reemplazará todos los registros locales actuales. ¿Continuar?"))return;for(const s of STORES)await replaceAll(s,data.stores[s]);await refreshAll();$("importStatus").textContent="Copia restaurada correctamente.";toast("Copia restaurada.");}catch(err){$("importStatus").textContent="No se pudo importar: "+err.message;}finally{e.target.value="";}});
 $("clearBtn").onclick=async()=>{if(!confirm("¿Borrar permanentemente todos los registros locales de este navegador? Primero descarga una copia si necesitas conservarlos."))return;if(!confirm("Confirmación final: se borrarán animales, reproducción, salud, finanzas y recordatorios."))return;for(const s of STORES)await replaceAll(s,[]);await refreshAll();toast("Datos locales borrados.");};
-(async()=>{try{db=await openDB();if(!(await all("pens")).length){for(const p of PEN_DEFS){const defaultCapacity=p.id.startsWith("n2-c")?50:(p.id.startsWith("n3-c")?40:0);await put("pens",{...p,capacity:defaultCapacity,notes:""});}}await refreshAll();if("serviceWorker"in navigator && location.protocol.startsWith("http"))navigator.serviceWorker.register("./sw.js").catch(()=>{});}catch(err){alert("No se pudo iniciar la base de datos local. Prueba en Safari actualizado o abre la app desde un sitio HTTPS. Detalle: "+err.message);}})();
+(async()=>{try{db=await openDB();await migratePenNames();if($("calendarSelectedDate"))$("calendarSelectedDate").value=today();await refreshAll();if("serviceWorker"in navigator && location.protocol.startsWith("http"))navigator.serviceWorker.register("./sw.js").catch(()=>{});}catch(err){alert("No se pudo iniciar la base de datos local. Prueba en Safari actualizado o abre la app desde un sitio HTTPS. Detalle: "+err.message);}})();

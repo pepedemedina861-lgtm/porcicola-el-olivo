@@ -97,3 +97,11 @@ VERSIÓN 5 — INGRESOS POR LOTE Y CAPACIDAD POR CORRAL
 - Áreas: Timbo gestación, Timbo macho reproductor, Timbo lactancia, Precebo 1, 2 y 3, Charca 1 y 2, Nave 2 corrales 1–4, Nave 3 corrales 1–12.
 - Capacidad predeterminada: Nave 2 corrales 1–4 = 50 cada uno; Nave 3 corrales 1–12 = 40 cada uno. Áreas de Nave 1 empiezan con capacidad 0/sin definir para que el usuario configure la capacidad real.
 - Se corrigió el resumen para leer los almacenes correctos y se actualizó la caché del service worker.
+
+
+ACTUALIZACIÓN VISUAL V8
+- Se añadió un calendario mensual interactivo que reúne recordatorios, controles sanitarios, inmunocastración y eventos reproductivos calculados.
+- Las áreas de Nave 1 se nombran Gestación, Macho reproductor y Maternidad / Lactancia; se quitaron los nombres genéricos “Timbo” de la interfaz.
+- Cada tarjeta de área permite editar el nombre, la nave, la capacidad máxima y las notas desde un formulario.
+- Se añadieron paneles visuales con el logo original y fotografías ilustrativas; las fotografías remotas requieren conexión a internet.
+- Al actualizar, la aplicación conserva los registros locales y migra los nombres antiguos de las áreas conocidas. Haz una copia JSON antes de reemplazar archivos.
